@@ -1,0 +1,16 @@
+image:
+  max_long_edge: 640
+  pixel_sample: 30000
+cluster:
+  k_candidates: [4,5,6]
+  deltaE_merge: 6
+  min_share: 0.015
+mood:
+  s_low: 0.30
+  s_high: 0.60
+  v_dark: 0.35
+  v_bright: 0.80
+harmony:
+  analogous_step_deg: 30
+  triadic_step_deg: 120
+random_seed: 42

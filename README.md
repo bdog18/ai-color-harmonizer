@@ -3,7 +3,7 @@
 Extract dominant color palettes, infer mood, and generate harmonious color schemes from any image.
 
 ![Python](https://img.shields.io/badge/Python-3.11-blue)
-![Streamlit](https://img.shields.io/badge/Streamlit-App-red)
+![Gradio](https://img.shields.io/badge/Gradio-App-orange)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 ## Features
@@ -12,7 +12,7 @@ Extract dominant color palettes, infer mood, and generate harmonious color schem
 - **Mood Inference** — Rule-based mood analysis (calming, energetic, cozy, minimal, dramatic, pastel, vibrant) with warm/cool and brightness tagging
 - **Color Harmonies** — Generate complementary, analogous, triadic, and split-complementary palettes that match the image's visual style
 - **Accent Detection** — Identify accent colors based on hue distance, saturation, and salience
-- **Interactive Controls** — Fine-tune clustering parameters, sampling methods, and visualization options via the sidebar
+- **Interactive Controls** — Fine-tune clustering parameters, sampling methods, and visualization options via the settings panel
 
 ## Demo
 
@@ -31,7 +31,7 @@ Upload any image to:
 git clone https://github.com/yourusername/ai-color-harmonizer.git
 cd ai-color-harmonizer
 pip install -r requirements.txt
-streamlit run app/streamlit_app.py
+python app/gradio_app.py
 ```
 
 ### Docker
@@ -44,7 +44,7 @@ docker run -p 8080:8080 ai-color-harmonizer
 ## Usage
 
 1. **Upload** a JPG, PNG, or WEBP image
-2. **Adjust** settings in the sidebar:
+2. **Adjust** settings in the Settings panel:
    - Resize longest edge (256–1024px)
    - Pixel sample count (5K–60K)
    - Sampling method (grid, uniform, superpixels)
@@ -58,7 +58,7 @@ docker run -p 8080:8080 ai-color-harmonizer
 
 ```
 ├── app/
-│   └── streamlit_app.py      # Streamlit UI
+│   └── gradio_app.py         # Gradio UI
 ├── harmonizer/
 │   ├── io.py                 # Image loading/saving
 │   ├── preprocess.py         # Resize, color conversion, sampling
@@ -99,7 +99,7 @@ Starting from the dominant color, harmonies are computed using standard color wh
 
 ## Configuration
 
-Settings can be adjusted via the sidebar or by editing [`configs/default.yaml`](configs/default.yaml):
+Settings can be adjusted via the Settings panel or by editing [`configs/default.yaml`](configs/default.yaml):
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
@@ -113,7 +113,7 @@ Settings can be adjusted via the sidebar or by editing [`configs/default.yaml`](
 ## Requirements
 
 - Python 3.11+
-- streamlit
+- gradio
 - numpy
 - opencv-python
 - scikit-learn

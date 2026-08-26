@@ -45,7 +45,7 @@ def analyze_image(
     End-to-end pipeline:
       I/O -> preprocess -> cluster -> palette -> mood -> harmony -> JSONable dict
 
-    src can be a filepath or file-like (Streamlit upload).
+    src can be a filepath or file-like (web UI upload).
     cfg: dict loaded from YAML (optional). Supports:
       image.max_long_edge
       image.pixel_sample

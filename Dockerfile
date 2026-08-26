@@ -25,12 +25,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Streamlit config for container environments
-ENV STREAMLIT_SERVER_HEADLESS=true \
-    STREAMLIT_SERVER_ENABLECORS=false \
-    STREAMLIT_SERVER_ENABLEXSRFPROTECTION=false \
-    STREAMLIT_BROWSER_GATHERUSAGESTATS=false
+# Gradio config for container environments
+ENV GRADIO_ANALYTICS_ENABLED=false \
+    PORT=8080
 
-CMD streamlit run app/streamlit_app.py \
-  --server.address 0.0.0.0 \
-  --server.port ${PORT:-8080}
+CMD ["python", "app/gradio_app.py"]

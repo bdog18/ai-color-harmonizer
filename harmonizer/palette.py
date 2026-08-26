@@ -137,6 +137,41 @@ def build_palette(
     return colors
 
 
+def _hue_dist(a: float, b: float) -> float:
+    d = abs(a - b) % 360.0
+    return min(d, 360.0 - d)
+
+
+def _accent_candidate_reasons(
+    palette: List[PaletteColor],
+    *,
+    min_share: float,
+    hue_distance_deg: float,
+    min_sat: float,
+) -> List[Tuple[PaletteColor, List[str]]]:
+    """
+    For each non-dominant color, the reasons it fails the accent heuristic
+    (empty list means it qualifies). Shared by find_accent_color and
+    explain_accent_color so the two can't drift out of sync.
+    """
+    if not palette:
+        return []
+    base = palette[0]
+
+    results: List[Tuple[PaletteColor, List[str]]] = []
+    for c in palette[1:]:
+        reasons = []
+        if c.share < min_share:
+            reasons.append(f"share {c.share:.3f} is below min_share {min_share:.3f}")
+        if c.hsv[1] < min_sat:
+            reasons.append(f"saturation {c.hsv[1]:.2f} is below min_sat {min_sat:.2f}")
+        dist = _hue_dist(c.hsv[0], base.hsv[0])
+        if dist < hue_distance_deg:
+            reasons.append(f"hue is only {dist:.1f}° from the base color (needs ≥ {hue_distance_deg:.1f}°)")
+        results.append((c, reasons))
+    return results
+
+
 def find_accent_color(
     palette: List[PaletteColor],
     *,
@@ -150,24 +185,53 @@ def find_accent_color(
     """
     if not palette:
         return None
-    base = palette[0]
 
-    def hue_dist(a: float, b: float) -> float:
-        d = abs(a - b) % 360.0
-        return min(d, 360.0 - d)
-
-    candidates = []
-    for c in palette[1:]:
-        if c.share < min_share:
-            continue
-        if c.hsv[1] < min_sat:
-            continue
-        if hue_dist(c.hsv[0], base.hsv[0]) < hue_distance_deg:
-            continue
-        candidates.append(c)
+    candidates = [
+        c
+        for c, reasons in _accent_candidate_reasons(
+            palette, min_share=min_share, hue_distance_deg=hue_distance_deg, min_sat=min_sat
+        )
+        if not reasons
+    ]
 
     # pick the most "accent-y": high salience among candidates
     if not candidates:
         return None
     candidates.sort(key=lambda c: c.salience, reverse=True)
     return candidates[0]
+
+
+def explain_accent_color(
+    palette: List[PaletteColor],
+    *,
+    min_share: float = 0.03,
+    hue_distance_deg: float = 80.0,
+    min_sat: float = 0.35,
+) -> List[str]:
+    """
+    Human-readable reasons why find_accent_color did or didn't return an
+    accent, using the same thresholds (see _accent_candidate_reasons).
+    """
+    if not palette:
+        return ["Palette is empty."]
+
+    base = palette[0]
+    lines = [f"Base color: {base.hex} (hue={base.hsv[0]:.1f}°, share={base.share:.2f})"]
+
+    evaluated = _accent_candidate_reasons(
+        palette, min_share=min_share, hue_distance_deg=hue_distance_deg, min_sat=min_sat
+    )
+    found_candidate = False
+    for c, reasons in evaluated:
+        if reasons:
+            lines.append(f"{c.hex}: {'; '.join(reasons)}")
+        else:
+            lines.append(f"{c.hex}: qualifies as an accent candidate")
+            found_candidate = True
+
+    if not found_candidate:
+        lines.append(
+            "No other palette color is both saturated and far enough in hue "
+            "from the base color, so no accent was found."
+        )
+    return lines

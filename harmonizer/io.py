@@ -1,12 +1,11 @@
 from __future__ import annotations
 from pathlib import Path
-from typing import Union
+from typing import BinaryIO, Union
 import numpy as np
 from PIL import Image, ImageOps
-from streamlit.runtime.uploaded_file_manager import UploadedFile
 
 def load_image_rgb(
-        src: Union[str, Path, UploadedFile],
+        src: Union[str, Path, BinaryIO],
         *,
         background: str = "white"
 ) -> np.ndarray:
@@ -16,7 +15,7 @@ def load_image_rgb(
       - PNG/TIFF with alpha: composited over `background`
       - CMYK to RGB conversion
       - EXIF orientation via ImageOps.exif_transpose
-    `src` can be a file path or a file-like object (for web/Streamlit).
+    `src` can be a file path or a file-like object (e.g. an upload from a web UI).
     """
     im = Image.open(src)
 

@@ -45,7 +45,7 @@ def plot_palette_swatches(
     Matplotlib swatch bar.
     - If equal_width=False: widths reflect share (sum to 1)
     - If equal_width=True: each swatch has width = 1/len(palette)
-    Returns fig for notebook or Streamlit.
+    Returns fig for notebook or web UI display.
     """
     fig, ax = plt.subplots(figsize=figsize)
     x = 0.0
@@ -100,7 +100,7 @@ def plot_accent_swatch(
 ):
     """
     Matplotlib single swatch.
-    Returns fig for notebook or Streamlit.
+    Returns fig for notebook or web UI display.
     """
     fig, ax = plt.subplots(figsize=figsize)
     rgb_u8 = hex_to_rgb_u8(accent)
